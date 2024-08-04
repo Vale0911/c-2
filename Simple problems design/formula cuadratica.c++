@@ -14,10 +14,7 @@ int main() {
     // Calcula la segunda raíz de la ecuación cuadrática usando la fórmula
     xdos = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
 
-    // Muestra la primera raíz en la salida estándar
     cout << "Raíz 1 (xuno) = " << xuno <<endl;
-    
-    // Muestra la segunda raíz en la salida estándar
     cout << "Raíz 2 (xdos) = " << xdos <<endl;
 
     return 0; // Indica que el programa terminó con éxito
