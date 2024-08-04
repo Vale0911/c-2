@@ -29,7 +29,7 @@ int main() {
         total = total + (precio_verduras * verduras);
 
     //comprobación de total de la compra
-    cout << "Tu total a pagar es: $" << total << endl;
+    cout << "Su total a pagar es: $" << total << endl;
     return 0;
 
 }

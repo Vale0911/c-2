@@ -10,7 +10,7 @@ int main() {
 
     // Solicitar calificaciones para cada estudiante
     for (int i = 0; i < NUM_ESTUDIANTES; ++i) {
-        cout << "Ingrese la calificación del estudiante " << (i + 1) << ": ";
+        cout << "Ingrese la calificación  estudiante " << (i + 1) << ": ";
         cin >> calificaciones[i];
         suma_total += calificaciones[i];
     }

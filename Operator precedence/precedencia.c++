@@ -6,7 +6,7 @@
 using namespace std;
 
 int main() {
-    // Corrección de la expresión matemática
+    // expresión matemática
     float x = 15 + (18 * (3 + 7 * 23 / 2.0 * pow(4, 0.5) + (12 * 15 - 7)));
 
     bool p = false; // bool is a logical type in C++ for true and false values

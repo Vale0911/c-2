@@ -15,7 +15,7 @@ int main() {
     cout <<"Presupuesto del proyecto"<<endl;
     cout <<"Cuantos investigadores?:"<<endl;
         cin >> cantidad_investigadores;
-    cout <<"Cuantos asistentes?: "<<endl;
+    cout <<"Cuaentos asistentes?: "<<endl;
         cin >> cantidad_asistentes;
     cout <<"Cuantas horas semanales de trabajo?:"<<endl;
         cin >> horas_semanales;
