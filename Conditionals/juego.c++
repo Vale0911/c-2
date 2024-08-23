@@ -35,7 +35,7 @@ int main() {
                 } else {
                     cout << "¿Es tu número 6? (s/n): ";
                     cin >> respuesta;
-                    if (respuesta == "s" || respuesta == "S") {
+                    if (respuesta == "s" ||  respuesta == "S") {
                         cout << "¡He adivinado tu número! Es 6." << endl;
                     } else {
                         cout << "¡He adivinado tu número! Es 7." << endl;
