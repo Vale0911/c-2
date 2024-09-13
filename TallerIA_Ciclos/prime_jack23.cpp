@@ -28,7 +28,7 @@ int jugar_ronda() {
 
         if (dado1 == dado2) {
             cout << "¡Sacaste dobles de " << dado1 << "!" << endl;
-            for (int i = 0; i < 3; ++i) {
+            for (int i = 0; i < 3; ++i) { // el código imprime un mensaje y luego simula el lanzamiento de tres dados adicionales
                 int dado_extra = generar_numero_aleatorio(1, 6);
                 cout << "Nuevo dado: " << dado_extra << endl;
                 total += dado_extra;
