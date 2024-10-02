@@ -1,6 +1,7 @@
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -9,7 +10,7 @@ struct Modelo {
     int existencias;
 };
 
-map<int, Modelo> inventario = {
+unordered_map<int, Modelo> inventario = {
     {0, {"Blusa A", 10}},
     {1, {"Blusa B", 15}},
     {2, {"Blusa C", 5}},
@@ -21,30 +22,32 @@ map<int, Modelo> inventario = {
     {202, {"Jeans C", 10}}
 };
 
-void mostrar_inventario() {
+void mostrarInventario() {
     cout << "\nInventario actual:" << endl;
-    for (const auto& item : inventario) {
-        cout << "ID: " << item.first << ", Modelo: " << item.second.nombre 
-             << ", Existencias: " << item.second.existencias << endl;
+    for (const auto& par : inventario) {
+        cout << "ID: " << par.first << ", Modelo: " << par.second.nombre << ", Existencias: " << par.second.existencias << endl;
     }
 }
 
-bool procesar_pedido(const map<int, int>& pedido) {
-    for (const auto& item : pedido) {
-        if (inventario[item.first].existencias < item.second) {
-            return false;
+bool procesarPedido(const unordered_map<int, int>& pedido) {
+    for (const auto& par : pedido) {
+        int id_modelo = par.first;
+        int cantidad = par.second;
+
+        if (inventario.find(id_modelo) == inventario.end() || inventario[id_modelo].existencias < cantidad) {
+            return false; // No se puede suplir el pedido
         }
     }
-    
-    for (const auto& item : pedido) {
-        inventario[item.first].existencias -= item.second;
+
+    for (const auto& par : pedido) {
+        inventario[par.first].existencias -= par.second;
     }
-    
-    return true;
+
+    return true; // Pedido procesado exitosamente
 }
 
-void realizar_compra() {
-    map<int, int> pedido;
+void realizarCompra() {
+    unordered_map<int, int> pedido;
     string entrada;
 
     cout << "Ingrese su pedido (ID y cantidad). Ejemplo: 0 2 para 2 piezas del modelo con ID 0." << endl;
@@ -58,11 +61,16 @@ void realizar_compra() {
             break;
         }
 
+        istringstream iss(entrada);
         int id_modelo, cantidad;
-        sscanf(entrada.c_str(), "%d %d", &id_modelo, &cantidad);
+        iss >> id_modelo >> cantidad;
 
         if (inventario.find(id_modelo) != inventario.end() && cantidad >= 1 && cantidad <= 5) {
-            pedido[id_modelo] += cantidad;
+            if (pedido.find(id_modelo) != pedido.end()) {
+                pedido[id_modelo] += cantidad;
+            } else {
+                pedido[id_modelo] = cantidad;
+            }
         } else {
             cout << "ID de modelo no válido o cantidad fuera de rango (1-5)." << endl;
         }
@@ -73,20 +81,24 @@ void realizar_compra() {
         return;
     }
 
-    if (procesar_pedido(pedido)) {
+    if (procesarPedido(pedido)) {
         cout << "Compra exitosa. Detalle del pedido:" << endl;
-        for (const auto& item : pedido) {
-            cout << "Modelo: " << inventario[item.first].nombre << ", Cantidad: " << item.second << endl;
+        for (const auto& par : pedido) {
+            cout << "Modelo: " << inventario[par.first].nombre << ", Cantidad: " << par.second << endl;
         }
     } else {
-        cout << "No se puede suplir el pedido, faltan existencias." << endl;
+        cout << "No se puede suplir el pedido, faltan existencias para algún modelo." << endl;
     }
 
-    mostrar_inventario();
+    mostrarInventario();
 }
 
 int main() {
-    mostrar_inventario();
+    mostrarInventario();
+    realizarCompra();
+    return 0;
+}
+
     realizar_compra();
     return 0;
 }
