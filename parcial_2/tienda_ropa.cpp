@@ -7,7 +7,7 @@ using namespace std;
 
 void generar_lineas(vector<int>& linea0, vector<int>& linea1, vector<int>& linea2, int max_num_existencias, int max_num_modelos) {
     for (int i = 0; i < max_num_modelos; i++) {
-        linea0[i] = rand() % (max_num_existencias + 1); // Generar número aleatorio entre 0 y max_num_existencias
+        linea0[i] = rand() % (max_num_existencias + 1); 
         linea1[i] = rand() % (max_num_existencias + 1);
         linea2[i] = rand() % (max_num_existencias + 1);
     }
