@@ -1,88 +1,150 @@
-#include <iostream>
-#include <vector>
-#include <cstdlib> 
-#include <ctime>   
+#include<iostream>
 
 using namespace std;
 
-void generar_lineas(vector<int>& linea0, vector<int>& linea1, vector<int>& linea2, int max_num_existencias, int max_num_modelos) {
-    for (int i = 0; i < max_num_modelos; i++) {
-        linea0[i] = rand() % (max_num_existencias + 1); 
-        linea1[i] = rand() % (max_num_existencias + 1);
-        linea2[i] = rand() % (max_num_existencias + 1);
-    }
-}
-
-void mostrar_inventario(const vector<int>& linea0, const vector<int>& linea1, const vector<int>& linea2, int max_num_modelos) {
-    for (int i = 0; i < max_num_modelos; i++) {
-        cout << "Modelo " << i << ": Linea0 - " << linea0[i] << ", Linea1 - " << linea1[i] << ", Linea2 - " << linea2[i] << endl;
-    }
-}
-
-void generar_pedidos(vector<int>& codigos_pedido, vector<int>& cantidades_pedido, int num_pedidos, int max_num_modelos) {
-    for (int i = 0; i < num_pedidos; i++) {
-        int codigo, cantidad;
-
-        cout << "Ingrese el código del modelo a pedir (0-" << max_num_modelos - 1 << "): ";
-        cin >> codigo;
-
-        while (codigo < 0 || codigo >= max_num_modelos) {
-            cout << "Error: el código debe estar entre 0 y " << max_num_modelos - 1 << "." << endl;
-            cout << "Ingrese el código del modelo a pedir (0-" << max_num_modelos - 1 << "): ";
-            cin >> codigo;
-        }
-
-        cout << "Ingrese la cantidad a pedir: ";
-        cin >> cantidad;
-
-        codigos_pedido.push_back(codigo);
-        cantidades_pedido.push_back(cantidad);
-    }
-}
-
-bool evaluar_pedido(const vector<int>& linea0, const vector<int>& linea1, const vector<int>& linea2, const vector<int>& codigos_pedido, const vector<int>& cantidades_pedido) {
-    for (size_t i = 0; i < codigos_pedido.size(); i++) {
-        int codigo = codigos_pedido[i];
-        int cantidad = cantidades_pedido[i];
-
-        if (cantidad > linea0[codigo] || cantidad > linea1[codigo] || cantidad > linea2[codigo]) {
-            cout << "El modelo " << codigo << " no tiene suficientes existencias." << endl;
-            return false;
+void generarLinea(int linea[], int maxExistencias, int numModelos){
+    int numMod = 3+rand()%8;
+    for(int i=0; i<numModelos; i++){
+        if(i >= numMod){
+            linea[i] = -1;
+        }else{
+            linea[i] = 1+rand()%maxExistencias;
         }
     }
-    return true;
 }
 
-int main() {
-    srand(static_cast<unsigned int>(time(0)));
+void generarLineas(int linea0[], int linea1[], int linea2[], int maxExistencias, int numModelos){
+    generarLinea(linea0,maxExistencias,numModelos);
+    generarLinea(linea1,maxExistencias,numModelos);
+    generarLinea(linea2,maxExistencias,numModelos);
+}
 
-    int max_num_existencias = 20;
-    int max_num_modelos = 10;
+void generarPedidos(int codigosPedido[], int cantidadesPedido[], int numPedidos, int maxNumCantidades){
+    for(int i=0; i<numPedidos; i++){
+        cout<<"Ingrese el número del modelo: ";
+        cin>>codigosPedido[i];
+        do{
+            cout<<"Ingrese la cantidad del modelo: ";
+            cin>>cantidadesPedido[i];
+        }while(cantidadesPedido[i] > maxNumCantidades || cantidadesPedido[i] < 0);
+    }
+}
 
-    vector<int> linea0(max_num_modelos, 0);
-    vector<int> linea1(max_num_modelos, 0);
-    vector<int> linea2(max_num_modelos, 0);
 
-    generar_lineas(linea0, linea1, linea2, max_num_existencias, max_num_modelos);
+bool validarPedidoInd(int linea0[], int linea1[], int linea2[], int codigo, int cant){
+    int linea = codigo/100;
+    int modelo = codigo%100;
+    //cout<<"validadndo "<<linea<<" "<<modelo;
+    if(linea > 2){
+        cout<<"Error - Línea no existe!"<<endl;
+        return false;
+    }else{
+        if(linea == 0){
+            if(linea0[modelo] != -1){
+                if(linea0[modelo] >= cant){
+                    return true;
+                }
+            }else{
+                return false;
+            }
+        }else if(linea == 1){
+            if(linea1[modelo] != -1){
+                if(linea1[modelo] >= cant){
+                    return true;
+                }
+            }else{
+                return false;
+            }
+        }else{
+            if(linea2[modelo] != -1){
+                if(linea2[modelo] >= cant){
+                    return true;
+                }
+            }else{
+                return false;
+            }
+        } 
+    }
+    return false;
+}
+
+void comprarPedidoInd(int linea0[], int linea1[], int linea2[], int codigo, int cant){
+    int linea = codigo/100;
+    int modelo = codigo%100;
     
-    mostrar_inventario(linea0, linea1, linea2, max_num_modelos);
+    if(linea == 0){
+        linea0[modelo] -= cant;
+    }else if(linea == 1){
+        linea1[modelo] -= cant;
+    }else{
+        linea2[modelo] -= cant;
+    } 
+    
+}
 
-    int num_pedidos;
-    cout << "Escriba el número de modelos que quiere pedir: ";
-    cin >> num_pedidos;
-
-    vector<int> codigos_pedido;
-    vector<int> cantidades_pedido;
-
-    generar_pedidos(codigos_pedido, cantidades_pedido, num_pedidos, max_num_modelos);
-
-    if (evaluar_pedido(linea0, linea1, linea2, codigos_pedido, cantidades_pedido)) {
-        cout << "El pedido puede ser cumplido." << endl;
-    } else {
-        cout << "El pedido no puede ser cumplido." << endl;
+bool evaluarPedido(int linea0[], int linea1[], int linea2[], int codigos[], int cantidades[], int numPedidos){
+    bool viable = true;
+    
+    for(int i=0; i<numPedidos; i++){
+        viable = viable && validarPedidoInd(linea0, linea1, linea2, codigos[i], cantidades[i]);
     }
+    
+    return viable;
+}
 
-    mostrar_inventario(linea0, linea1, linea2, max_num_modelos);
+void comprarPedido(int linea0[], int linea1[], int linea2[], int codigos[], int cantidades[], int numPedidos){
+    for(int i=0; i<numPedidos; i++){
+        comprarPedidoInd(linea0, linea1, linea2, codigos[i], cantidades[i]);
+    }
+}
 
+void mostrarInventarioInd(int numlinea, int linea[], int maxNumModelos){
+    int i=0;
+    while(i < maxNumModelos && linea[i] != -1){
+        cout<<"("<<100*numlinea+i<<","<<linea[i]<<") ";
+        i++;
+    }
+    cout<<endl;
+}
+
+void mostrarInventario(int linea0[], int linea1[], int linea2[], int maxNumModelos){
+    mostrarInventarioInd(0, linea0, maxNumModelos);
+    mostrarInventarioInd(1, linea1, maxNumModelos);
+    mostrarInventarioInd(2, linea2, maxNumModelos);
+}
+
+int main()
+{
+    srand(1234);
+    int maxNumModelos = 10;
+    int maxNumExistencias = 20;
+    int linea0[maxNumModelos];
+    int linea1[maxNumModelos];
+    int linea2[maxNumModelos];
+    
+    int maxNumPedidos =  10;
+    int maxNumCantidades = 5;
+    int numPedidos = 0;
+    int codigosPedido[maxNumPedidos];
+    int cantidadesPedido[maxNumPedidos];
+    
+    generarLineas(linea0,linea1,linea2,maxNumExistencias,maxNumModelos);
+    
+    mostrarInventario(linea0,linea1,linea2,maxNumModelos);
+    
+    cout<<"Escriba el número de modelos que quiere pedir: ";
+    cin>>numPedidos;
+    generarPedidos(codigosPedido, cantidadesPedido, numPedidos, maxNumCantidades);
+    
+    if(evaluarPedido(linea0,linea1,linea2,codigosPedido, cantidadesPedido, numPedidos)){
+        comprarPedido(linea0,linea1,linea2,codigosPedido, cantidadesPedido, numPedidos);
+        cout<<"Sí se pudo comprar el pedido!"<<endl;
+    }else{
+        cout<<"No se pudo comprar el pedido!"<<endl;
+    }
+    
+    mostrarInventario(linea0,linea1,linea2,maxNumModelos);
+    
+    
     return 0;
 }
